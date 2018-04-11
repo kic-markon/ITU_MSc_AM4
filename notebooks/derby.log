@@ -1,0 +1,13 @@
+----------------------------------------------------------------
+Thu Mar 29 09:59:07 CAT 2018:
+Booting Derby version The Apache Software Foundation - Apache Derby - 10.10.2.0 - (1582446): instance a816c00e-0162-70c4-79ed-000035837a38 
+on database directory /Users/markon/ITU/ITU_MSc_AM4/notebooks/metastore_db with class loader org.apache.spark.sql.hive.client.IsolatedClientLoader$$anon$1@553f211a 
+Loaded from file:/Users/markon/zeppelin/zeppelin-0.7.3-bin-all/interpreter/spark/dep/zeppelin-spark-dependencies_2.11-0.7.3.jar
+java.vendor=Oracle Corporation
+java.runtime.version=1.8.0_161-b12
+user.dir=/Users/markon/ITU/ITU_MSc_AM4/notebooks
+os.name=Mac OS X
+os.arch=x86_64
+os.version=10.13.3
+derby.system.home=null
+Database Class Loader started - derby.database.classpath=''
