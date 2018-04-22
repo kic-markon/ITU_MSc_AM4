@@ -1,0 +1,104 @@
+\documentclass[bigger]{beamer}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+
+\usepackage{graphicx}
+%\usetheme{Singapore}
+%\useoutertheme{infolines}
+\useoutertheme{miniframes}
+\useinnertheme{rectangles}
+
+\setbeamercolor{frametitle}{fg=black}
+\beamertemplatenavigationsymbolsempty
+
+%Global Background must be put in preamble
+\usebackgroundtemplate%
+{%
+    \includegraphics[width=\paperwidth,height=\paperheight]{bg.jpeg}%
+}
+
+
+
+
+\begin{document}
+
+
+\begin{frame}[fragile]{Learning as optimization}
+\begin{itemize}
+\item We want to find the true mapping that transforms the inputs $x$
+into the outputs $y$ for the distribution $p$ of the data.
+
+\item Define the mapping as a family of functions parametrized by $\theta$.
+
+\item Define the error $J$ as the expectation of the distance $L$ between the mapping and the true $y$:
+\[J(\theta) = \mathbb{E}_{(x,y)\sim\hat{p}_{data}} L(f(x;\theta),y)\]
+
+\item Then we want the $\theta$ that minimizes $J$.
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Linear Regression}
+\begin{itemize}
+\item Let us assume that the conditional probability of getting $y$ when observing $x$ is
+\[P(y|x) \approx exp( -(y - f(\theta,x))^2 / 2\sigma^2)\]
+\item Then $f$ can be calculated explicitly from the sample set, by minimizing the error
+\item For the linear function $f(x) = a x + b$, the LSM approximator is the linear regression
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Multi-layer Perceptron}
+\begin{itemize}
+\item Suppose we have a set of examples connecting inputs $x$ with outputs $y$
+\[(x_1^i, x_1^i,\ldots x_n^i ) \mapsto (y_1^i,\ldots y_m^i)\]
+\item We want to create a function that approximates the (unknown) function generating the examples.
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Calculating the output of the neuron}
+\begin{itemize}
+\item One common activation function is the log-sigmoid:
+\[\sigma(t) = \frac{1}{1+e^{-\beta t}}\]
+\item It has a conveniently simple derivative:
+\[\frac{d\sigma(\beta t)}{dt} = \beta [ \sigma(\beta,t)[1 - \sigma(\beta,t)]]\]
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{The Back-Propagation (BP) Algorithm}
+\begin{itemize}
+\item Start from gradient descent. For the iterative step $(n+1)$, the connection weights are modified proportionally to the gradient vector of the weights with respect to the error:
+\[w_{ij}[n+1] = w_{ij}[n] + \eta g(w_{ij}[n])\]
+\item The trick is: how to calculate it efficiently.
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{The Back-Propagation (BP) Algorithm}
+\begin{itemize}
+\item Denote the layers by $l$, counting from the input. 
+Then the updated connection weights are calculated backwards from the output layer.
+\[w_{ij}^l[n] = w_{ij}[n-1] + \delta w_{ij}^l[n]\]
+\[w_{ij}^{l-1}[n] = \eta \delta_j^l x_i^{l-1}[n] + \mu \Delta w_{ij}^l [n-1]\]
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{The Back-Propagation (BP) Algorithm}
+\begin{itemize}
+\item Parameters:
+\begin{itemize}
+\item{$\eta$}  learning rate
+\item{$\mu$}   momentum
+\item{$\delta$}  propagation from previous layer, calculated recursively as:
+\[\delta_j^l = \frac{dx_j^l}{dt} \sum_{k=1}^r{\delta_k^{l+1} w_{kj}^{l+1}}\]
+\end{itemize}
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}[fragile]{Support Vector Machine}
+\begin{itemize}
+\item For linearly non-separable cases, the SVM uses a “kernel” to extract features from the example. One often used kernel is the Radial Basis Function (RBF) kernel:
+\[K(x_1,x_2) = exp(-\gamma |x_1 - x_2|^2)\]
+\end{itemize}
+\end{frame}
+
+\end{document}
+

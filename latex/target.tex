@@ -1,0 +1,48 @@
+\documentclass[bigger]{beamer}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+
+\usepackage{graphicx}
+%\usetheme{Singapore}
+%\useoutertheme{infolines}
+\useoutertheme{miniframes}
+\useinnertheme{rectangles}
+
+\setbeamercolor{frametitle}{fg=black}
+\beamertemplatenavigationsymbolsempty
+
+%Global Background must be put in preamble
+\usebackgroundtemplate%
+{%
+    \includegraphics[width=\paperwidth,height=\paperheight]{bg.jpeg}%
+}
+
+
+
+
+\begin{document}
+
+\begin{frame}{Multi-Layer Perceptron}
+The activation function of each neuron is given by the log-{}sigmoid:
+\begin{equation*}\sigma(t) = \frac{1}{1 + e^{-\beta t}}\end{equation*}
+where $\beta$ is the ``synapse strength''.
+
+The function gets its name from the shape of its graph:
+%% \begin{minipage}{1.0\linewidth}
+%% \begin{center}
+%% \includegraphics[width=1.0\linewidth,height=6.5in,keepaspectratio]{9.png}
+%% \end{center}
+%% \end{minipage}\vspace{0.75cm}
+
+
+\end{frame}
+
+\begin{frame}{Backpropagation Learning}
+The error $e$ is given by
+\begin{equation*}e = d - y\end{equation*}
+where $d$ is the desired output, and $y$ is the output from the network.
+
+\end{frame}
+
+\end{document}
+

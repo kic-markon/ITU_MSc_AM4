@@ -1,0 +1,178 @@
+\documentclass[bigger]{beamer}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+
+\usepackage{graphicx}
+%\usetheme{Singapore}
+%\useoutertheme{infolines}
+\useoutertheme{miniframes}
+\useinnertheme{rectangles}
+
+\setbeamercolor{frametitle}{fg=black}
+\beamertemplatenavigationsymbolsempty
+
+%Global Background must be put in preamble
+\usebackgroundtemplate%
+{%
+    \includegraphics[width=\paperwidth,height=\paperheight]{bg.jpeg}%
+}
+
+
+
+
+\begin{document}
+
+\begin{frame}{A Short Review of Descriptive Statistics}
+Our numerical data is assumed to be drawn from a stationary
+distribution. Some of its important properties for the set of
+samples $X$ are given by descriptive statistics.
+\begin{description}
+\item{\bf Mean:} \(\mu = E[X]\) 
+\item{\bf Standard deviation:} \(\sigma = \sqrt{E[ (X-\mu)^2 ]} \) 
+\item{\bf Skewness:}  \(\gamma_1 = E[ (\frac{X-\mu}{\sigma})^3 ] \)
+\item{\bf Kurtosis:}  \(Kurt[X] = E[ (\frac{X-\mu}{\sigma})^4 ] \)
+\end{description}
+Their rough meaning is something like this.\\
+$\mu$: where are the samples concentrated?\\
+$\sigma$: how far are most of them from the mean?\\
+$\gamma_1$: are smaller or larger samples farther from the mean?\\
+$Kurt$: are many samples lying outside of $\pm\sigma$?
+\end{frame}
+
+
+% Local background must be enclosed by curly braces for grouping.
+{
+%\usebackgroundtemplate{\includegraphics[width=\paperwidth]{kitten.jpg}}%
+\begin{frame}{Descriptive statistics in Python}
+Many choices; a few methods in order of simplicity:
+\begin{itemize}
+\item With {\em scipy: scipy.stats.describe(...)}
+\item With Python 3 statistics: {\em statistics.mean(...), statistics.stdev(...), ...}
+\item With {\em numpy}: {\em data.mean(), data.std(), ...}
+\end{itemize}
+
+\end{frame}
+}
+
+
+\begin{frame}{Statistical Testing}
+We want to find out a qualitative piece of information from our data,
+like 
+``Are observed frequencies of a categorical variable different from expectation?''. 
+%The ``Null Hypothesis'' would be that there is no difference. 
+We can test this by the $\chi^2$ (Chi-square) test.
+\begin{description}
+\item{\bf Observed frequencies for Category $i$:} \(O_i\) 
+\item{\bf Expected frequencies for Category $i$:} \(E_i\) 
+\item{\bf Chi-square value:} \(\chi^2 = \sum\frac{(O_i - E_i)^2}{E_i}\) 
+\item{\bf Chi-square critical value:} \(\chi^2_a\)
+\item{\bf Significance:}  \(\chi^2 > \chi^2_a\)
+\end{description}
+If the $\chi^2$ value calculated from the data exceeds the critical
+value $\chi^2_a$  for the observations and for the
+desired significance level, we conclude that
+there is a significant deviation from the expectation.
+\end{frame}
+
+
+\begin{frame}[fragile]{Statistical Testing in Python}
+We can use the ``chisquare'' method of {\em scipy.stats}.
+When the expected frequencies are equal, they can be omitted:
+\begin{verbatim}
+>>> from scipy.stats import chisquare
+>>> chisquare([16, 18, 16, 14, 12, 12])
+(2.0, 0.84914503608460956)
+\end{verbatim}
+The 2nd result is the ``p-value'', the significance of the deviation.
+\end{frame}
+
+
+\begin{frame}[fragile]{Simple statistics with PySpark}
+The previous Python statistics work fine for ``small data'', 
+but we need to do better for Big Data.  
+
+We can put the data into an RDD, accessed through Spark.
+\begin{verbatim}
+>>> from linalg import Vectors
+>>> rdd = sc.parallelize([Vectors.dense([2, 0, 0, -2]),
+...                       Vectors.dense([4, 5, 0,  3]),
+...                       Vectors.dense([6, 7, 0,  8])])
+>>> cStats = Statistics.colStats(rdd)
+>>> cStats.mean()
+array([ 4.,  4.,  0.,  3.])
+>>> cStats.variance()
+array([  4.,  13.,   0.,  25.])
+\end{verbatim}
+\end{frame}
+
+\begin{frame}[fragile]{Learning as optimization}
+\begin{itemize}
+\item We want to find the true mapping that transforms the inputs $x$
+into the outputs $y$ for the distribution $p$ of the data.
+
+\item Define the mapping as a family of functions parametrized by $\theta$.
+
+\item Define the error $J$ as the expectation of the distance $L$ between the mapping and the true $y$:
+\[J(\theta) = \mathbb{E}_{(x,y)\sim\hat{p}_{data}} L(f(x;\theta),y)\]
+
+\item Then we want the $\theta$ that minimizes $J$.
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Linear Regression}
+\begin{itemize}
+\item Let us assume that the conditional probability of getting $y$ when observing $x$ is
+\[P(y|x) \approx exp( -(y - f(\theta,x))^2 / 2\sigma^2)\]
+\item Then $f$ can be calculated explicitly from the sample set, by minimizing the error
+\item For the linear function $f(x) = a x + b$, the LSM approximator is the linear regression
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Multi-layer Perceptron}
+\begin{itemize}
+\item Suppose we have a set of examples connecting inputs $x$ with outputs $y$
+\[(x_1^i, x_1^i,\ldots x_n^i ) \mapsto (y_1^i,\ldots y_m^i)\]
+\item We want to create a function that approximates the (unknown) function generating the examples.
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Calculating the output of the neuron}
+\begin{itemize}
+\item One common activation function is the log-sigmoid:
+\[\sigma(t) = \frac{1}{1+e^{-\beta t}}\]
+\item It has a conveniently simple derivative:
+\[\frac{d\sigma(\beta t)}{dt} = \beta [ \sigma(\beta,t)[1 - \sigma(\beta,t)]]\]
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{The Back-Propagation (BP) Algorithm}
+\begin{itemize}
+\item Start from gradient descent. For the iterative step $(n+1)$, the connection weights are modified proportionally to the gradient vector of the weights with respect to the error:
+\[w_{ij}[n+1] = w_{ij}[n] + \eta g(w_{ij}[n])\]
+\item The trick is: how to calculate it efficiently.
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{The Back-Propagation (BP) Algorithm}
+\begin{itemize}
+\item Denote the layers by $l$, counting from the input. 
+Then the updated connection weights are calculated backwards from the output layer.
+\[w_{ij}^l[n] = w_{ij}[n-1] + \delta w_{ij}^l[n]\]
+\[w_{ij}^{l-1}[n] = \eta \delta_j^l x_i^{l-1}[n] + \mu \Delta w_{ij}^l [n-1]\]
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{The Back-Propagation (BP) Algorithm}
+\begin{itemize}
+\item Parameters:
+\begin{itemize}
+\item{$\eta$}  learning rate
+\item{$\mu$}   momentum
+\item{$\delta$}  propagation from previous layer, calculated recursively as:
+\[\delta_j^l = \frac{dx_j^l}{dt} \sum_{k=1}^r{\delta_k^{l+1} w_{kj}^{l+1}\]
+\end{itemize}
+\end{itemize}
+\end{frame}
+
+\end{document}
+
